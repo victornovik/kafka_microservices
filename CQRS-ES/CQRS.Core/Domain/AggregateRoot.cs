@@ -1,4 +1,5 @@
 ﻿using CQRS.Core.Events;
+using static CQRS.Core.Events.BaseEvent;
 
 namespace CQRS.Core.Domain;
 
@@ -6,34 +7,35 @@ public abstract class AggregateRoot
 {
     private readonly List<BaseEvent> changes = [];
 
-    public Guid Id { get; protected set; }
-    public int Version { get; set; } = -1;
+    public Guid AggregateId { get; protected set; }
+    public int Version { get; set; } = DefaultEventVersion;
 
     public IEnumerable<BaseEvent> GetUncommitedChanges() => changes;
-    
+
     public void MarkChangesAsCommited() => changes.Clear();
 
-    private void ApplyChange(BaseEvent @event, bool isNew)
+    private void ApplyChange(BaseEvent evt, bool isNew)
     {
-        var method = GetType().GetMethod("Apply", [@event.GetType()]);
+        var method = GetType().GetMethod("Apply", [evt.GetType()]);
         ArgumentNullException.ThrowIfNull(method);
-
-        method.Invoke(this, [@event]);
+        method.Invoke(this, [evt]);
 
         if (isNew)
-            changes.Add(@event);
+        {
+            changes.Add(evt);
+        }
     }
 
-    protected void RaiseEvent(BaseEvent @event)
+    protected void RaiseEvent(BaseEvent evt)
     {
-        ApplyChange(@event, isNew: true);
+        ApplyChange(evt, isNew: true);
     }
 
     public void ReplayEvents(IEnumerable<BaseEvent> events)
     {
         foreach (var e in events)
         {
-            ApplyChange(e, isNew:false);
+            ApplyChange(e, isNew: false);
         }
     }
 }

@@ -59,4 +59,3 @@ networks:
   default:    
     name: kafka_microservices_network
     external: true
-    

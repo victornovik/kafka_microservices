@@ -1,23 +1,28 @@
+using CQRS.Core.Domain;
+using CQRS.Core.Infra;
+using Post.Cmd.Infra.Config;
+using Post.Cmd.Infra.Repositories;
+using Post.Cmd.Infra.Stores;
+
 var builder = WebApplication.CreateBuilder(args);
+var services = builder.Services;
 
-// Add services to the container.
+services.Configure<MongoDbConfig>(builder.Configuration.GetSection(nameof(MongoDbConfig)));
 
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+services.AddScoped<IEventSourcingHandler, EventStoreRepository>();
+services.AddScoped<IEventStore, EventStore>();
+services.AddControllers();
+services.AddOpenApi();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
