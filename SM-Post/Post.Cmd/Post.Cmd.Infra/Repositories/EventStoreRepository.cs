@@ -6,7 +6,7 @@ using Post.Cmd.Infra.Config;
 
 namespace Post.Cmd.Infra.Repositories;
 
-public class EventStoreRepository : IEventSourcingHandler
+public class EventStoreRepository : IEventStoreRepository
 {
     private readonly IMongoCollection<EventModel> eventStoreCollection;
 

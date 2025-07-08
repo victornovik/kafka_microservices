@@ -9,7 +9,7 @@ var services = builder.Services;
 
 services.Configure<MongoDbConfig>(builder.Configuration.GetSection(nameof(MongoDbConfig)));
 
-services.AddScoped<IEventSourcingHandler, EventStoreRepository>();
+services.AddScoped<IEventStoreRepository, EventStoreRepository>();
 services.AddScoped<IEventStore, EventStore>();
 services.AddControllers();
 services.AddOpenApi();

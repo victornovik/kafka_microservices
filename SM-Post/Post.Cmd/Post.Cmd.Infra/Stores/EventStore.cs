@@ -7,7 +7,7 @@ using static CQRS.Core.Events.BaseEvent;
 
 namespace Post.Cmd.Infra.Stores;
 
-public class EventStore(IEventSourcingHandler EventStoreRepository) : IEventStore
+public class EventStore(IEventStoreRepository EventStoreRepository) : IEventStore
 {
     public async Task SaveEventsAsync(Guid aggregateId, IEnumerable<BaseEvent> events, int expectedVersion)
     {

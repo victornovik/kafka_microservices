@@ -2,7 +2,7 @@
 
 namespace CQRS.Core.Domain;
 
-public interface IEventSourcingHandler
+public interface IEventStoreRepository
 {
     Task SaveAsync(EventModel evt);
     Task<List<EventModel>> FindByAggregateIdAsync(Guid aggregateId);
