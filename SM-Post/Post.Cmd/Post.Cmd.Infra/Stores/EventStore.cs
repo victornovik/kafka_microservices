@@ -2,16 +2,17 @@
 using CQRS.Core.Events;
 using CQRS.Core.Exceptions;
 using CQRS.Core.Infra;
+using CQRS.Core.Producers;
 using Post.Cmd.Domain.Aggregates;
 using static CQRS.Core.Events.BaseEvent;
 
 namespace Post.Cmd.Infra.Stores;
 
-public class EventStore(IEventStoreRepository EventStoreRepository) : IEventStore
+public class EventStore(IEventStoreRepository eventStoreRepository, IEventProducer eventProducer) : IEventStore
 {
     public async Task SaveEventsAsync(Guid aggregateId, IEnumerable<BaseEvent> events, int expectedVersion)
     {
-        var eventStream = await EventStoreRepository.FindByAggregateIdAsync(aggregateId);
+        var eventStream = await eventStoreRepository.FindByAggregateIdAsync(aggregateId);
         if (expectedVersion != DefaultEventVersion && eventStream[^1].Version != expectedVersion)
             throw new ConcurrencyException();
 
@@ -31,13 +32,16 @@ public class EventStore(IEventStoreRepository EventStoreRepository) : IEventStor
                 EventData = evt
             };
 
-            await EventStoreRepository.SaveAsync(eventModel);
+            await eventStoreRepository.SaveAsync(eventModel);
+
+            var topic = Environment.GetEnvironmentVariable("KAFKA_TOPIC");
+            await eventProducer.ProduceAsync(topic, evt);
         }
     }
 
     public async Task<List<BaseEvent>> GetEventsAsync(Guid aggregateId)
     {
-        var eventStream = await EventStoreRepository.FindByAggregateIdAsync(aggregateId);
+        var eventStream = await eventStoreRepository.FindByAggregateIdAsync(aggregateId);
         if (eventStream == null || !eventStream.Any())
             throw new AggregateNotFoundException($"Incorrect post ID provided: {aggregateId}");
 
