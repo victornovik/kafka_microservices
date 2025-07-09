@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -16,6 +16,10 @@
     <ProjectReference Include="..\..\Post.Common\Post.Common.csproj" />
     <ProjectReference Include="..\Post.Cmd.Domain\Post.Cmd.Domain.csproj" />
     <ProjectReference Include="..\Post.Cmd.Infra\Post.Cmd.Infra.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Dtos\" />
   </ItemGroup>
 
 </Project>

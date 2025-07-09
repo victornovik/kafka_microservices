@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 
 namespace Post.Cmd.Infra.Producers;
 
-public class EventProducer(IOptions<ProducerConfig> config) : IEventProducer
+public class KafkaProducer(IOptions<ProducerConfig> config) : IEventProducer
 {
     public async Task ProduceAsync<T>(string topic, T evt) where T : BaseEvent
     {

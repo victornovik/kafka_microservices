@@ -1,16 +1,26 @@
 ﻿using CQRS.Core.Domain;
 using CQRS.Core.Events;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using Post.Cmd.Infra.Config;
 
 namespace Post.Cmd.Infra.Repositories;
 
-public class EventStoreRepository : IEventStoreRepository
+public class MongoRepository : IEventStoreRepository
 {
     private readonly IMongoCollection<EventModel> eventStoreCollection;
 
-    public EventStoreRepository(IOptions<MongoDbConfig> cfg)
+    static MongoRepository()
+    {
+        // Save GUID and DateTimeOffset as string
+        BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
+        BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(BsonType.String));
+    }
+
+    public MongoRepository(IOptions<MongoDbConfig> cfg)
     {
         var mongoClient = new MongoClient(cfg.Value.ConnectionString);
         var mongoDatabase = mongoClient.GetDatabase(cfg.Value.Database);

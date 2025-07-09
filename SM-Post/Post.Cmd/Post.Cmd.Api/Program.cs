@@ -21,23 +21,12 @@ services.Configure<MongoDbConfig>(builder.Configuration.GetSection(nameof(MongoD
 // Kafka configuration
 services.Configure<ProducerConfig>(builder.Configuration.GetSection(nameof(ProducerConfig)));
 
-services.AddScoped<IEventStoreRepository, EventStoreRepository>();
-services.AddScoped<IEventProducer, EventProducer>();
+services.AddScoped<IEventStoreRepository, MongoRepository>();
+services.AddScoped<IEventProducer, KafkaProducer>();
 services.AddScoped<IEventStore, EventStore>();
 services.AddScoped<IEventSourcingHandler<PostAggregate>, EventSourcingHandler>();
 services.AddScoped<ICommandHandler, CommandHandler>();
-
-// Register command handlers
-var commandHandler = services.BuildServiceProvider().GetRequiredService<ICommandHandler>();
-var commandDispatcher = new CommandDispatcher();
-commandDispatcher.RegisterHandler<AddCommentCommand>(commandHandler.HandleAsync);
-commandDispatcher.RegisterHandler<EditCommentCommand>(commandHandler.HandleAsync);
-commandDispatcher.RegisterHandler<RemoveCommentCommand>(commandHandler.HandleAsync);
-commandDispatcher.RegisterHandler<NewPostCommand>(commandHandler.HandleAsync);
-commandDispatcher.RegisterHandler<EditPostCommand>(commandHandler.HandleAsync);
-commandDispatcher.RegisterHandler<LikePostCommand>(commandHandler.HandleAsync);
-commandDispatcher.RegisterHandler<DeletePostCommand>(commandHandler.HandleAsync);
-services.AddSingleton<ICommandDispatcher>(_ => commandDispatcher);
+RegisterCommandHandlers(services);
 
 services.AddControllers();
 services.AddOpenApi();
@@ -57,3 +46,17 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+void RegisterCommandHandlers(IServiceCollection serviceCollection)
+{
+    var commandHandler = serviceCollection.BuildServiceProvider().GetRequiredService<ICommandHandler>();
+    var commandDispatcher = new CommandDispatcher();
+    commandDispatcher.RegisterHandler<AddCommentCommand>(commandHandler.HandleAsync);
+    commandDispatcher.RegisterHandler<EditCommentCommand>(commandHandler.HandleAsync);
+    commandDispatcher.RegisterHandler<RemoveCommentCommand>(commandHandler.HandleAsync);
+    commandDispatcher.RegisterHandler<NewPostCommand>(commandHandler.HandleAsync);
+    commandDispatcher.RegisterHandler<EditPostCommand>(commandHandler.HandleAsync);
+    commandDispatcher.RegisterHandler<LikePostCommand>(commandHandler.HandleAsync);
+    commandDispatcher.RegisterHandler<DeletePostCommand>(commandHandler.HandleAsync);
+    serviceCollection.AddSingleton<ICommandDispatcher>(_ => commandDispatcher);
+}
