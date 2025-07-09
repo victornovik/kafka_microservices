@@ -16,8 +16,9 @@ using Post.Cmd.Infra.Stores;
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 
-// Configuration
+// Mongo configuration
 services.Configure<MongoDbConfig>(builder.Configuration.GetSection(nameof(MongoDbConfig)));
+// Kafka configuration
 services.Configure<ProducerConfig>(builder.Configuration.GetSection(nameof(ProducerConfig)));
 
 services.AddScoped<IEventStoreRepository, EventStoreRepository>();
