@@ -21,6 +21,7 @@ dataContext.Database.EnsureCreated();
 services.AddScoped<IPostRepository, PostRepository>();
 services.AddScoped<ICommentRepository, CommentRepository>();
 services.AddScoped<IEventHandler, Post.Query.Infra.Handlers.EventHandler>();
+
 // Kafka configuration
 services.Configure<ConsumerConfig>(builder.Configuration.GetSection(nameof(ConsumerConfig)));
 services.AddScoped<IEventConsumer, EventConsumer>();
@@ -40,9 +41,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

@@ -31,7 +31,7 @@ public class CommentRepository(DatabaseContextFactory contextFactory) : IComment
         await context.SaveChangesAsync();
     }
 
-    public async Task<CommentEntity?> GetByIdAsync(Guid commentId)
+    public async Task<CommentEntity> GetByIdAsync(Guid commentId)
     {
         using var context = contextFactory.CreateDbContext();
         return await context.Comments.FirstOrDefaultAsync(c => c.CommentId == commentId);

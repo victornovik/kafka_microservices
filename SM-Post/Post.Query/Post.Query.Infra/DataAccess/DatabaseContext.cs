@@ -3,12 +3,8 @@ using Post.Query.Domain.Entities;
 
 namespace Post.Query.Infra.DataAccess;
 
-public class DatabaseContext : DbContext
+public class DatabaseContext(DbContextOptions options) : DbContext(options)
 {
-    public DatabaseContext(DbContextOptions options) : base(options)
-    {
-    }
-
     public DbSet<PostEntity> Posts { get; set; }
     public DbSet<CommentEntity> Comments { get; set; }
 }

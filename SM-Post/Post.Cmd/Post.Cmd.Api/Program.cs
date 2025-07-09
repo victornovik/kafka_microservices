@@ -1,9 +1,11 @@
 using Confluent.Kafka;
 using CQRS.Core.Domain;
+using CQRS.Core.Events;
 using CQRS.Core.Handlers;
 using CQRS.Core.Infra;
 using CQRS.Core.Mediator;
 using CQRS.Core.Producers;
+using MongoDB.Bson.Serialization;
 using Post.Cmd.Api.Commands;
 using Post.Cmd.Domain.Aggregates;
 using Post.Cmd.Infra.Config;
@@ -12,17 +14,27 @@ using Post.Cmd.Infra.Mediator;
 using Post.Cmd.Infra.Producers;
 using Post.Cmd.Infra.Repositories;
 using Post.Cmd.Infra.Stores;
+using Post.Common.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 
-// Mongo configuration
+// Mongo
+BsonClassMap.RegisterClassMap<BaseEvent>();
+BsonClassMap.RegisterClassMap<PostCreatedEvent>();
+BsonClassMap.RegisterClassMap<MessageUpdatedEvent>();
+BsonClassMap.RegisterClassMap<PostLikedEvent>();
+BsonClassMap.RegisterClassMap<CommentAddedEvent>();
+BsonClassMap.RegisterClassMap<CommentUpdatedEvent>();
+BsonClassMap.RegisterClassMap<CommentRemovedEvent>();
+BsonClassMap.RegisterClassMap<PostRemovedEvent>();
 services.Configure<MongoDbConfig>(builder.Configuration.GetSection(nameof(MongoDbConfig)));
-// Kafka configuration
-services.Configure<ProducerConfig>(builder.Configuration.GetSection(nameof(ProducerConfig)));
-
 services.AddScoped<IEventStoreRepository, MongoRepository>();
+
+// Kafka
+services.Configure<ProducerConfig>(builder.Configuration.GetSection(nameof(ProducerConfig)));
 services.AddScoped<IEventProducer, KafkaProducer>();
+
 services.AddScoped<IEventStore, EventStore>();
 services.AddScoped<IEventSourcingHandler<PostAggregate>, EventSourcingHandler>();
 services.AddScoped<ICommandHandler, CommandHandler>();

@@ -31,7 +31,7 @@ public class PostRepository(DatabaseContextFactory contextFactory) : IPostReposi
         await context.SaveChangesAsync();
     }
 
-    public async Task<PostEntity?> GetByIdAsync(Guid postId)
+    public async Task<PostEntity> GetByIdAsync(Guid postId)
     {
         using var context = contextFactory.CreateDbContext();
         return await context.Posts
