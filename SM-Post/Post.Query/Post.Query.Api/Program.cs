@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Post.Query.Infra.DataAccess;
+using Post.Query.Infra.Handlers;
+using Post.Query.Infra.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -12,6 +14,10 @@ services.AddSingleton<DatabaseContextFactory>(new DatabaseContextFactory(configu
 // Create database and tables from code
 var dataContext = services.BuildServiceProvider().GetRequiredService<DatabaseContext>();
 dataContext.Database.EnsureCreated();
+
+services.AddScoped<IPostRepository, PostRepository>();
+services.AddScoped<ICommentRepository, CommentRepository>();
+services.AddScoped<IEventHandler, Post.Query.Infra.Handlers.EventHandler>();
 
 services.AddControllers();
 services.AddOpenApi();

@@ -10,7 +10,7 @@ public class CommentEntity
     [Key]
     public Guid CommentId { get; set; }
     public string UserName { get; set; }
-    public DateTime DatePosted { get; set; }
+    public DateTime CommentDate { get; set; }
     public string Comment { get; set; }
     public bool IsEdited { get; set; }
     public Guid PostId { get; set; }
