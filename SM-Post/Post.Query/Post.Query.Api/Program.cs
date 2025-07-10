@@ -1,9 +1,14 @@
 using Confluent.Kafka;
 using CQRS.Core.Consumers;
+using CQRS.Core.Mediator;
 using Microsoft.EntityFrameworkCore;
+using Post.Query.Api;
+using Post.Query.Api.Queries;
+using Post.Query.Domain.Entities;
 using Post.Query.Infra.Consumers;
 using Post.Query.Infra.DataAccess;
 using Post.Query.Infra.Handlers;
+using Post.Query.Infra.Mediator;
 using Post.Query.Infra.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,10 +27,8 @@ services.AddScoped<IPostRepository, PostRepository>();
 services.AddScoped<ICommentRepository, CommentRepository>();
 services.AddScoped<IEventHandler, Post.Query.Infra.Handlers.EventHandler>();
 
-// Kafka configuration
-services.Configure<ConsumerConfig>(builder.Configuration.GetSection(nameof(ConsumerConfig)));
-services.AddScoped<IEventConsumer, EventConsumer>();
-
+services.AddKafka(builder);
+services.AddQueryHandlers();
 services.AddControllers();
 services.AddHostedService<ConsumerHostedService>();
 services.AddOpenApi();

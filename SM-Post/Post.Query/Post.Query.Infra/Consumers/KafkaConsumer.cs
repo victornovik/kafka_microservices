@@ -9,7 +9,7 @@ using System.Text.Json;
 
 namespace Post.Query.Infra.Consumers;
 
-public class EventConsumer(ILogger<EventConsumer> logger, IOptions<ConsumerConfig> config, IEventHandler eventHandler) : IEventConsumer
+public class KafkaConsumer(ILogger<KafkaConsumer> logger, IOptions<ConsumerConfig> config, IEventHandler eventHandler) : IEventConsumer
 {
     public void Consume(string topic)
     {
