@@ -68,7 +68,7 @@ public class PostAggregate : AggregateRoot
         if (!comments[commentId].Item2.Equals(username, StringComparison.CurrentCultureIgnoreCase))
             throw new InvalidOperationException("You are not allowed to edit a comment of another user");
 
-        RaiseEvent(new CommentUpdatedEvent { Id = AggregateId, CommentId = commentId, Comment = comment, Username = username, EditDate = DateTime.Now });
+        RaiseEvent(new CommentUpdatedEvent { Id = AggregateId, CommentId = commentId, Comment = comment, Username = username, EditDate = DateTime.UtcNow });
     }
 
     public void Apply(CommentUpdatedEvent evt)
