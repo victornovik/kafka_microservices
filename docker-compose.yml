@@ -46,13 +46,26 @@ services:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=Password123
       - MSSQL_PID=Express
-  
+
+  postgresql:
+    image: postgres:latest
+    container_name: postgresql
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - "postgresql_data:/var/lib/postgresql/data"
+    environment:
+      - POSTGRES_PASSWORD=Password123
+
 volumes:
   zookeeper_data:
     driver: local
   kafka_data:
     driver: local
   mongo_data:
+    driver: local
+  postgresql_data:
     driver: local
 
 networks:
