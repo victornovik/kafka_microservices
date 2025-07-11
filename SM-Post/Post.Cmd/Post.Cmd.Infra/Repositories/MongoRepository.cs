@@ -39,4 +39,12 @@ public class MongoRepository : IEventStoreRepository
             .ToListAsync()
             .ConfigureAwait(false);
     }
+
+    public async Task<List<EventModel>> FindAllAsync()
+    {
+        return await eventStoreCollection
+            .Find(filter => true)
+            .ToListAsync()
+            .ConfigureAwait(false);
+    }
 }

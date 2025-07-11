@@ -28,7 +28,8 @@ public static class Extensions
         dispatcher.RegisterHandler<EditPostCommand>(handler.HandleAsync);
         dispatcher.RegisterHandler<LikePostCommand>(handler.HandleAsync);
         dispatcher.RegisterHandler<DeletePostCommand>(handler.HandleAsync);
-        
+        dispatcher.RegisterHandler<RestoreReadDbCommand>(handler.HandleAsync);
+
         services.AddSingleton<ICommandDispatcher>(_ => dispatcher);
 
         return services;

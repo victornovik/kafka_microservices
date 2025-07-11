@@ -50,4 +50,16 @@ public class EventStore(IEventStoreRepository eventStoreRepository, IEventProduc
             .Select(x => x.EventData)
             .ToList();
     }
+
+    public async Task<List<Guid>> GetAggregateIdsAsync()
+    {
+        var eventStream = await eventStoreRepository.FindAllAsync();
+        if (eventStream == null || !eventStream.Any())
+            throw new AggregateNotFoundException("Cannot retrieve events");
+
+        return eventStream
+            .Select(x => x.AggregateId)
+            .Distinct()
+            .ToList();
+    }
 }
